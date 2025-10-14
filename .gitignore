@@ -26,4 +26,26 @@ replay_pid*
 # IntelliJ IDEA
 .idea/
 *.iml
+/target/
+out/
+build/
+*.iws
+
+
+
+# Maven Wrapper
+.mvn/wrapper/maven-wrapper.jar
+!/.mvn/wrapper/maven-wrapper.properties
+
+# ======================
+# macOS system files
+# ======================
 .DS_Store
+.AppleDouble
+.LSOverride
+
+
+# ======================
+# VS Code (optional)
+# ======================
+.vscode/
