@@ -109,23 +109,23 @@
       </div>
       <div class="report-information-entry">
         <p>Total Users:</p>
-        <p>13</p>
+        <p th:text="${totalUsers}">13</p>
       </div>
       <div class="report-information-entry">
         <p>Active Users:</p>
-        <p>12</p>
+        <p th:text="${activeUsers}">12</p>
       </div>
       <div class="report-information-entry">
         <p>Inactive Users:</p>
-        <p>1</p>
+        <p th:text="${inactiveUsers}">1</p>
       </div>
       <div class="report-information-entry">
         <p>Admins:</p>
-        <p>1</p>
+        <p th:text="${totalAdmins}">1</p>
       </div>
       <div class="report-information-entry">
         <p>Non-Admins:</p>
-        <p>12</p>
+        <p th:text="${nonAdminUsers}">12</p>
       </div>
       <div class="details-section-container">
         <strong>Data fetched on: </strong>
@@ -138,23 +138,23 @@
       </div>
       <div class="report-information-entry">
         <p>Total Wallets:</p>
-        <p>19</p>
+        <p th:text="${totalWallets}"></p>
       </div>
       <div class="report-information-entry">
         <p>Total Wallet Amount:</p>
-        <p>484.97</p>
+        <p th:text="${totalWalletAmount}"></p>
       </div>
       <div class="report-information-entry">
         <p>Users with 1 Wallet:</p>
-        <p>69.23%</p>
+        <p th:text="${usersWith1Wallet} + '%'"></p>
       </div>
       <div class="report-information-entry">
         <p>Users with 2 Wallets:</p>
-        <p>15.38%</p>
+        <p th:text="${usersWith2Wallets} + '%'"></p>
       </div>
       <div class="report-information-entry">
         <p>Users with 3 Wallets:</p>
-        <p>15.38%</p>
+        <p th:text="${usersWith3Wallets} + '%'"></p>
       </div>
       <div class="details-section-container">
         <strong>Data fetched on: </strong>
@@ -167,27 +167,27 @@
       </div>
       <div class="report-information-entry">
         <p>Total Transactions:</p>
-        <p>51</p>
+        <p th:text="${totalTransactions}"></p>
       </div>
       <div class="report-information-entry">
         <p>Total Transaction Amount:</p>
-        <p>1,042.38</p>
+        <p th:text="${totalTransactionAmount}"></p>
       </div>
       <div class="report-information-entry">
         <p>Total Withdrawals:</p>
-        <p>23</p>
+        <p th:text="${totalWithdrawals}"></p>
       </div>
       <div class="report-information-entry">
         <p>Total Deposits:</p>
-        <p>28</p>
+        <p th:text="${totalDeposits}"></p>
       </div>
       <div class="report-information-entry">
         <p>Succeeded Transactions:</p>
-        <p>42</p>
+        <p th:text="${succeededTransactions}"></p>
       </div>
       <div class="report-information-entry">
         <p>Failed Transactions:</p>
-        <p>9</p>
+        <p th:text="${failedTransactions}"></p>
       </div>
       <div class="details-section-container">
         <strong>Data fetched on: </strong>
@@ -200,23 +200,23 @@
       </div>
       <div class="report-information-entry">
         <p>Default Subscriptions:</p>
-        <p>9</p>
+        <p th:text="${totalDefaultSubscriptions}"></p>
       </div>
       <div class="report-information-entry">
         <p>Premium Subscriptions:</p>
-        <p>2</p>
+        <p th:text="${totalPremiumSubscriptions}"></p>
       </div>
       <div class="report-information-entry">
         <p>Ultimate Subscriptions:</p>
-        <p>2</p>
+        <p th:text="${totalUltimateSubscriptions}"></p>
       </div>
       <div class="report-information-entry">
         <p>Monthly Subscriptions:</p>
-        <p>13</p>
+        <p th:text="${totalMonthlySubscriptions}"></p>
       </div>
       <div class="report-information-entry">
         <p>Yearly Subscriptions:</p>
-        <p>0</p>
+        <p th:text="${totalYearlySubscriptions}"></p>
       </div>
       <div class="details-section-container">
         <strong>Data fetched on: </strong>

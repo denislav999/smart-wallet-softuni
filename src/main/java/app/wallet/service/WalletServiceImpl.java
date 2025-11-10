@@ -5,6 +5,7 @@ import app.transaction.model.TransactionStatus;
 import app.transaction.model.TransactionType;
 import app.transaction.service.TransactionService;
 import app.user.model.User;
+import app.user.repository.UserRepository;
 import app.wallet.model.Wallet;
 import app.wallet.model.WalletStatus;
 import app.wallet.repository.WalletRepository;
@@ -14,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Currency;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WalletServiceImpl implements WalletService {
@@ -26,11 +27,13 @@ public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
     private final TransactionService transactionService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public WalletServiceImpl(WalletRepository walletRepository, TransactionService transactionService) {
+    public WalletServiceImpl(WalletRepository walletRepository, TransactionService transactionService, UserRepository userRepository) {
         this.walletRepository = walletRepository;
         this.transactionService = transactionService;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -41,8 +44,9 @@ public class WalletServiceImpl implements WalletService {
         }
 
         String transactionDescription = TOP_UP_DESCRIPTION_FORMAT.formatted(topUpAmount.doubleValue());
+
         if (wallet.getStatus().equals(WalletStatus.INACTIVE)) {
-            Transaction transaction = transactionService.createNewTransaction(wallet.getOwner(),
+            return transactionService.createNewTransaction(wallet.getOwner(),
                     SMART_WALLET_SENDER_IDENTIFIER,
                     wallet.getId().toString(),
                     topUpAmount,
@@ -71,6 +75,42 @@ public class WalletServiceImpl implements WalletService {
                 null);
     }
 
+    public Transaction charge(User user, UUID walletId, BigDecimal amount, String chargeDescription) {
+        Wallet wallet = findById(walletId);
+
+        if (wallet == null) {
+            new RuntimeException(String.format("Wallet with id %s not found!", walletId));
+        }
+
+        if (wallet.getStatus().equals(WalletStatus.INACTIVE)) {
+            return transactionService.createNewTransaction(user,
+                    SMART_WALLET_SENDER_IDENTIFIER,
+                    wallet.getId().toString(),
+                    amount,
+                    wallet.getBalance(),
+                    wallet.getCurrency(),
+                    TransactionType.DEPOSIT,
+                    TransactionStatus.FAILED,
+                    chargeDescription,
+                    INACTIVE_WALLET_FAILURE_REASON);
+        }
+
+        wallet.setBalance(wallet.getBalance().subtract(amount));
+        wallet.setUpdatedOn(LocalDateTime.now());
+
+        return transactionService.createNewTransaction(user,
+                SMART_WALLET_SENDER_IDENTIFIER,
+                wallet.getId().toString(),
+                amount,
+                wallet.getBalance(),
+                wallet.getCurrency(),
+                TransactionType.DEPOSIT,
+                TransactionStatus.SUCCEEDED,
+                chargeDescription,
+                null);
+
+    }
+
     @Override
     public void createDefaultWallet(User user) {
         Wallet wallet = Wallet.builder()
@@ -86,5 +126,33 @@ public class WalletServiceImpl implements WalletService {
 
     private Wallet findById(UUID id) {
         return walletRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Map<Integer, Double> walletsPerUserPercentages(){
+        List<Integer> counts = userRepository.walletCounts();
+
+        Map<Integer, Long> countMap = counts
+                .stream()
+                .collect(Collectors.groupingBy(c -> c, Collectors.counting()));
+
+        Map<Integer, Double> percentages = new HashMap<>();
+        for (int i = 1; i <= 3; i++) {
+            long usersWithIWallets = countMap.getOrDefault(i, 0L);
+            double pct = usersWithIWallets * 100.0 / userRepository.countUsers();
+            percentages.put(i, pct);
+        }
+
+        return percentages;
+    }
+
+    @Override
+    public int walletCount(){
+        return walletRepository.totalWallets();
+    }
+
+    @Override
+    public double totalWalletAmount(){
+        return walletRepository.totalWalletAmount();
     }
 }

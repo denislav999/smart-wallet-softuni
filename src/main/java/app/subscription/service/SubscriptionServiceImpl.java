@@ -3,6 +3,7 @@ package app.subscription.service;
 import app.subscription.model.Subscription;
 import app.subscription.model.SubscriptionPeriod;
 import app.subscription.model.SubscriptionStatus;
+import app.subscription.model.SubscriptionType;
 import app.subscription.repository.SubscriptionRepository;
 import app.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .renewalAllowed(true)
                 .createdOn(LocalDateTime.now())
                 .expiresOn(LocalDateTime.now().plusMonths(1))
+                .type(SubscriptionType.DEFAULT)
                 .build();
 
         subscriptionRepository.saveAndFlush(subscription);
+    }
+
+    @Override
+    public int totalSubscriptionsByType(SubscriptionType subscriptionType) {
+        return subscriptionRepository.countByType(subscriptionType);
+    }
+    @Override
+    public int totalSubscriptionsByPeriod(SubscriptionPeriod subscriptionPeriod) {
+        return subscriptionRepository.countByPeriod(subscriptionPeriod);
     }
 }

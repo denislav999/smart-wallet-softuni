@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -70,4 +70,45 @@ public class UserServiceImpl implements UserService {
 
         log.info(String.format("User %s has been created!", registerRequest.username()));
     }
+
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("Username %s does not exists!", username)));
+    }
+
+    @Override
+    public User getById(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User %s does not exists!", id)));
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public int totalUsers() {
+        return userRepository.countUsers();
+    }
+
+    @Override
+    public int totalActiveUsers() {
+        return userRepository.countActiveUsers();
+    }
+
+    @Override
+    public int totalInactiveUsers() {
+        return totalUsers() - totalActiveUsers();
+    }
+
+    @Override
+    public int totalAdmins() {
+        return userRepository.countByRole(UserRole.ADMIN);
+    }
+
+    @Override
+    public int totalNonAdminUsers() {
+        return totalUsers() - totalAdmins();
+    }
+
+
 }
